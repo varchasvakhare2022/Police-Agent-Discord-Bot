@@ -1,3 +1,6 @@
 # Police-Agent-Discord-Bot
-This is not yet updated.
-Check after 3-4 days.
+Moderation + Utility Discord Bot
+
+## How to run the bot
+1.Clone this repository `git clone https://github.com/varchasvakhare2022/Police-Agent-Discord-Bot`
+2.
