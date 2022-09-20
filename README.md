@@ -10,7 +10,7 @@ Moderation + Utility Discord Bot
 - You are all set now!
 
 ## Note
-You are free to clone, fork, modify anything in this project unless you give me credit.
-& Credits could be -
+You are free to clone, fork, modify anything in this project unless you give me credit. </br>
+Credits could be -
 - Mention my github profile url
 - My discord username `varchasvkhare#6684`
