@@ -1,2 +1,3 @@
 # Police-Agent-Discord-Bot
-A moderation + Utility Bot on Discord
+This is not yet updated.
+Check after 3-4 days.
