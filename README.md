@@ -11,6 +11,6 @@ Moderation + Utility Discord Bot
 
 ## Note
 You are free to clone, fork, modify anything in this project unless you give me credit.
-* Credits could be -
+& Credits could be -
 - Mention my github profile url
 - My discord username `varchasvkhare#6684`
