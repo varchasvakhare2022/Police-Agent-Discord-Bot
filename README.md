@@ -7,4 +7,4 @@ Moderation + Utility Discord Bot
 - Open cmd and run `pip install -r requirements.txt`
 - Now edit certain values in the code like `server_id`, `channel_id`, `role_name` etc
 - Now run `python3 __main__.py`
-You are all set now!
+- You are all set now!
