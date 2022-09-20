@@ -8,3 +8,9 @@ Moderation + Utility Discord Bot
 - Now edit certain values in the code like `server_id`, `channel_id`, `role_name` etc
 - Now run `python3 __main__.py`
 - You are all set now!
+
+## Note
+You are free to clone, fork, modify anything in this project unless you give me credit.
+* Credits could be -
+- Mention my github profile url
+- My discord username `varchasvkhare#6684`
