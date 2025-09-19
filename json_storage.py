@@ -79,3 +79,14 @@ class JSONStorage:
     def get_blacklist(self) -> list:
         """Get all blacklisted user IDs"""
         return self._read_json(self.blacklist_file)
+    
+    # Anti-spam configuration methods
+    def get_antispam_config(self) -> dict:
+        """Get anti-spam configuration"""
+        antispam_file = os.path.join(self.data_dir, "antispam_config.json")
+        return self._read_json(antispam_file)
+    
+    def save_antispam_config(self, config: dict):
+        """Save anti-spam configuration"""
+        antispam_file = os.path.join(self.data_dir, "antispam_config.json")
+        self._write_json(antispam_file, config)

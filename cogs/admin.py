@@ -22,6 +22,12 @@ class Admin(commands.Cog):
                 return await ctx.send("Prefix cannot be longer than 10 characters!")
             
             self.bot.storage.set_prefix(ctx.guild.id, new_prefix)
+            
+            # Log the action
+            logging_cog = self.bot.get_cog('LoggingSystem')
+            if logging_cog:
+                await logging_cog.log_system_event("prefix_change", f"Server prefix changed to: `{new_prefix}`", ctx.guild, ctx.author, f"Old prefix: `{current_prefix}`")
+            
             embed = discord.Embed(
                 title="Prefix Updated",
                 description=f"Server prefix changed to: `{new_prefix}`",
@@ -83,6 +89,12 @@ class Admin(commands.Cog):
                 )
             else:
                 self.bot.storage.add_to_blacklist(user.id)
+                
+                # Log the action
+                logging_cog = self.bot.get_cog('LoggingSystem')
+                if logging_cog:
+                    await logging_cog.log_system_event("blacklist_add", f"{user.display_name} has been blacklisted from using the bot.", ctx.guild, ctx.author, f"User ID: {user.id}")
+                
                 embed = discord.Embed(
                     title="User Blacklisted",
                     description=f"{user.display_name} has been blacklisted from using the bot.",
