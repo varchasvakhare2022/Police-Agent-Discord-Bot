@@ -226,7 +226,7 @@ class ModeratorDutyMode(commands.Cog):
         except Exception as e:
             print(f"Error notifying moderator: {e}")
     
-    @commands.command(name='duty_on')
+    @commands.command(name='duty on')
     @commands.has_permissions(manage_messages=True)
     async def duty_on_command(self, ctx):
         """Go on duty as a moderator"""
@@ -284,7 +284,7 @@ class ModeratorDutyMode(commands.Cog):
             except:
                 pass
     
-    @commands.command(name='duty_off')
+    @commands.command(name='duty off')
     @commands.has_permissions(manage_messages=True)
     async def duty_off_command(self, ctx):
         """Go off duty as a moderator"""
@@ -356,7 +356,7 @@ class ModeratorDutyMode(commands.Cog):
             except:
                 pass
     
-    @commands.command(name='duty_status')
+    @commands.command(name='duty status')
     async def duty_status_command(self, ctx, member: discord.Member = None):
         """Check duty status for a moderator"""
         member = member or ctx.author
@@ -415,7 +415,7 @@ class ModeratorDutyMode(commands.Cog):
         
         await ctx.send(embed=embed)
     
-    @commands.command(name='duty_roster')
+    @commands.command(name='duty roster')
     async def duty_roster_command(self, ctx):
         """Show all moderators and their duty status"""
         moderators = []

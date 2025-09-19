@@ -283,7 +283,7 @@ class ComprehensiveLogging(commands.Cog):
         
         return embed
     
-    @commands.command(name='bot_logs')
+    @commands.command(name='bot logs')
     @commands.has_permissions(administrator=True)
     async def logs_command(self, ctx, log_type: str = 'all', limit: int = 20):
         """View bot logs (admin only)"""
@@ -331,7 +331,7 @@ class ComprehensiveLogging(commands.Cog):
         embed.set_footer(text=f"Showing last {len(logs)} of {len(self.bot_logs)} total logs")
         await ctx.send(embed=embed)
     
-    @commands.command(name='log_config')
+    @commands.command(name='log config')
     @commands.has_permissions(administrator=True)
     async def log_config_command(self, ctx, setting: str, *, value: str):
         """Configure logging settings (admin only)"""
@@ -402,7 +402,7 @@ class ComprehensiveLogging(commands.Cog):
         
         self.save_data()
     
-    @commands.command(name='log_status')
+    @commands.command(name='log status')
     @commands.has_permissions(administrator=True)
     async def log_status_command(self, ctx):
         """Show current logging configuration (admin only)"""
@@ -481,7 +481,7 @@ class ComprehensiveLogging(commands.Cog):
         
         await ctx.send(embed=embed)
     
-    @commands.command(name='clear_logs')
+    @commands.command(name='clear logs')
     @commands.has_permissions(administrator=True)
     async def clear_logs_command(self, ctx, log_type: str = 'all'):
         """Clear logs (admin only)"""

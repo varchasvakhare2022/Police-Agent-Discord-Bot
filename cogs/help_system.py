@@ -18,7 +18,13 @@ class HelpMenuView(discord.ui.View):
             '🛡️ Security',
             '📋 Logging',
             '🏆 Reputation',
-            '📊 Reports'
+            '📊 Reports',
+            '🎯 Polls & Voting',
+            '🎭 Self Roles',
+            '✅ Verification',
+            '⚙️ Configuration',
+            '📖 Basic Commands',
+            '🔐 Owner Commands'
         ]
         
     async def get_main_embed(self):
@@ -236,7 +242,43 @@ class HelpMenuView(discord.ui.View):
         embed = await self.get_category_embed(self.categories[7])
         await interaction.response.edit_message(embed=embed, view=self)
     
-    @discord.ui.button(label="❌ Close", style=discord.ButtonStyle.danger, row=3)
+    @discord.ui.button(label="🎯 Polls", style=discord.ButtonStyle.success, row=3)
+    async def polls_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.current_page = 8
+        embed = await self.get_category_embed(self.categories[8])
+        await interaction.response.edit_message(embed=embed, view=self)
+    
+    @discord.ui.button(label="🎭 Self Roles", style=discord.ButtonStyle.success, row=4)
+    async def selfroles_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.current_page = 9
+        embed = await self.get_category_embed(self.categories[9])
+        await interaction.response.edit_message(embed=embed, view=self)
+    
+    @discord.ui.button(label="✅ Verification", style=discord.ButtonStyle.success, row=4)
+    async def verification_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.current_page = 10
+        embed = await self.get_category_embed(self.categories[10])
+        await interaction.response.edit_message(embed=embed, view=self)
+    
+    @discord.ui.button(label="⚙️ Config", style=discord.ButtonStyle.success, row=4)
+    async def config_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.current_page = 11
+        embed = await self.get_category_embed(self.categories[11])
+        await interaction.response.edit_message(embed=embed, view=self)
+    
+    @discord.ui.button(label="📖 Basic", style=discord.ButtonStyle.success, row=4)
+    async def basic_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.current_page = 12
+        embed = await self.get_category_embed(self.categories[12])
+        await interaction.response.edit_message(embed=embed, view=self)
+    
+    @discord.ui.button(label="🔐 Owner", style=discord.ButtonStyle.success, row=5)
+    async def owner_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.current_page = 13
+        embed = await self.get_category_embed(self.categories[13])
+        await interaction.response.edit_message(embed=embed, view=self)
+    
+    @discord.ui.button(label="❌ Close", style=discord.ButtonStyle.danger, row=5)
     async def close_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.edit_message(content="Help menu closed.", embed=None, view=None)
 
@@ -288,6 +330,21 @@ class HelpSystem(commands.Cog):
     def get_command_info(self, command_name):
         """Get detailed information about a specific command"""
         command_database = {
+            # Help System Commands
+            'help': {
+                'description': 'Show help information for commands',
+                'usage': 'help [command]',
+                'permissions': 'None',
+                'example': 'help warn'
+            },
+            'help_categories': {
+                'description': 'Show all command categories',
+                'usage': 'help_categories',
+                'permissions': 'None',
+                'example': 'help_categories'
+            },
+            
+            # Police Persona Commands
             'police_config': {
                 'description': 'Configure police persona settings (admin only)',
                 'usage': 'police_config <setting> <value>',
@@ -305,6 +362,12 @@ class HelpSystem(commands.Cog):
                 'usage': 'police_test [response_type]',
                 'permissions': 'Manage Messages',
                 'example': 'police_test rule_violations'
+            },
+            'police_responses': {
+                'description': 'View police response types',
+                'usage': 'police_responses',
+                'permissions': 'None',
+                'example': 'police_responses'
             },
             'police_patrol': {
                 'description': 'Police patrol announcement',
@@ -330,6 +393,8 @@ class HelpSystem(commands.Cog):
                 'permissions': 'Manage Messages',
                 'example': 'police_kick @user Temporary removal'
             },
+            
+            # Evidence System Commands
             'warn': {
                 'description': 'Issue a warning to a user',
                 'usage': 'warn @user reason',
@@ -366,6 +431,8 @@ class HelpSystem(commands.Cog):
                 'permissions': 'Administrator',
                 'example': 'clear_warnings @user'
             },
+            
+            # Silent Watch Commands
             'watch_user': {
                 'description': 'Start watching a user',
                 'usage': 'watch_user @user [duration]',
@@ -396,6 +463,8 @@ class HelpSystem(commands.Cog):
                 'permissions': 'Manage Messages',
                 'example': 'watch_alerts'
             },
+            
+            # Moderator Tools Commands
             'whois': {
                 'description': 'Get comprehensive user information',
                 'usage': 'whois @user',
@@ -420,6 +489,20 @@ class HelpSystem(commands.Cog):
                 'permissions': 'None',
                 'example': 'notes @user'
             },
+            'modlog': {
+                'description': 'View moderation logs',
+                'usage': 'modlog [@user]',
+                'permissions': 'None',
+                'example': 'modlog @user'
+            },
+            'clear_notes': {
+                'description': 'Clear notes for a user (admin only)',
+                'usage': 'clear_notes @user',
+                'permissions': 'Administrator',
+                'example': 'clear_notes @user'
+            },
+            
+            # Duty System Commands
             'duty_on': {
                 'description': 'Go on duty as moderator',
                 'usage': 'duty_on',
@@ -462,6 +545,8 @@ class HelpSystem(commands.Cog):
                 'permissions': 'Administrator',
                 'example': 'duty_config auto_assign true'
             },
+            
+            # Security Report Commands
             'security_report': {
                 'description': 'Generate security report',
                 'usage': 'security_report',
@@ -492,6 +577,26 @@ class HelpSystem(commands.Cog):
                 'permissions': 'Manage Messages',
                 'example': 'add_violation spam @user Spamming messages'
             },
+            
+            # Rule Reminders Commands
+            'add_rule': {
+                'description': 'Add a new rule',
+                'usage': 'add_rule <rule_text>',
+                'permissions': 'Manage Messages',
+                'example': 'add_rule No spamming'
+            },
+            'remove_rule': {
+                'description': 'Remove a rule',
+                'usage': 'remove_rule <rule_id>',
+                'permissions': 'Manage Messages',
+                'example': 'remove_rule 1'
+            },
+            'list_rules': {
+                'description': 'List all rules',
+                'usage': 'list_rules',
+                'permissions': 'None',
+                'example': 'list_rules'
+            },
             'rule_violations': {
                 'description': 'Check violations',
                 'usage': 'rule_violations [@user]',
@@ -504,6 +609,8 @@ class HelpSystem(commands.Cog):
                 'permissions': 'Administrator',
                 'example': 'clear_violations @user'
             },
+            
+            # Comprehensive Logging Commands
             'bot_logs': {
                 'description': 'View bot logs',
                 'usage': 'bot_logs [type] [limit]',
@@ -528,6 +635,40 @@ class HelpSystem(commands.Cog):
                 'permissions': 'Administrator',
                 'example': 'clear_logs all'
             },
+            
+            # Strike Leaderboard Commands
+            'strike': {
+                'description': 'Issue a strike to a user',
+                'usage': 'strike @user reason',
+                'permissions': 'Manage Messages',
+                'example': 'strike @user Breaking rules'
+            },
+            'strikes': {
+                'description': 'View strikes for a user',
+                'usage': 'strikes [@user]',
+                'permissions': 'None',
+                'example': 'strikes @user'
+            },
+            'strikeboard': {
+                'description': 'Show strike leaderboard',
+                'usage': 'strikeboard',
+                'permissions': 'None',
+                'example': 'strikeboard'
+            },
+            'strike_stats': {
+                'description': 'Show strike statistics',
+                'usage': 'strike_stats',
+                'permissions': 'None',
+                'example': 'strike_stats'
+            },
+            'clear_strikes': {
+                'description': 'Clear strikes for a user (admin only)',
+                'usage': 'clear_strikes @user',
+                'permissions': 'Administrator',
+                'example': 'clear_strikes @user'
+            },
+            
+            # Reputation System Commands
             'give_reputation': {
                 'description': 'Give reputation points',
                 'usage': 'give_reputation @user points',
@@ -546,6 +687,8 @@ class HelpSystem(commands.Cog):
                 'permissions': 'None',
                 'example': 'bypass_check @user'
             },
+            
+            # Police Features Commands
             'badge': {
                 'description': 'Give Good Citizen badge',
                 'usage': 'badge @user reason',
@@ -576,12 +719,8 @@ class HelpSystem(commands.Cog):
                 'permissions': 'None',
                 'example': 'command_count'
             },
-            'crime_report': {
-                'description': 'Generate crime report',
-                'usage': 'crime_report',
-                'permissions': 'Administrator',
-                'example': 'crime_report'
-            },
+            
+            # Server Patrols Commands
             'patrol_status': {
                 'description': 'Check patrol status',
                 'usage': 'patrol_status',
@@ -594,17 +733,389 @@ class HelpSystem(commands.Cog):
                 'permissions': 'Manage Messages',
                 'example': 'force_patrol'
             },
-            'patrol_test': {
-                'description': 'Test patrol system',
-                'usage': 'patrol_test',
+            
+            # Crime Report System Commands
+            'crime_report': {
+                'description': 'Generate crime report',
+                'usage': 'crime_report',
                 'permissions': 'Administrator',
-                'example': 'patrol_test'
+                'example': 'crime_report'
+            },
+            'add_warning': {
+                'description': 'Add warning to crime report',
+                'usage': 'add_warning @user reason',
+                'permissions': 'Manage Messages',
+                'example': 'add_warning @user Spamming'
+            },
+            'add_ban': {
+                'description': 'Add ban to crime report',
+                'usage': 'add_ban @user reason',
+                'permissions': 'Manage Messages',
+                'example': 'add_ban @user Severe violation'
+            },
+            'add_raid_blocked': {
+                'description': 'Add raid blocked to crime report',
+                'usage': 'add_raid_blocked @user reason',
+                'permissions': 'Manage Messages',
+                'example': 'add_raid_blocked @user Raid attempt'
+            },
+            'add_scam_deleted': {
+                'description': 'Add scam deleted to crime report',
+                'usage': 'add_scam_deleted @user reason',
+                'permissions': 'Manage Messages',
+                'example': 'add_scam_deleted @user Scam message'
             },
             'start_daily_reports': {
                 'description': 'Start daily reports',
                 'usage': 'start_daily_reports',
                 'permissions': 'Administrator',
                 'example': 'start_daily_reports'
+            },
+            
+            # Admin Bypass Commands
+            'bypass-status': {
+                'description': 'Check bypass status',
+                'usage': 'bypass-status [@user]',
+                'permissions': 'None',
+                'example': 'bypass-status @user'
+            },
+            'force-bypass': {
+                'description': 'Force bypass for a user (admin only)',
+                'usage': 'force-bypass @user',
+                'permissions': 'Administrator',
+                'example': 'force-bypass @user'
+            },
+            'admin-roles': {
+                'description': 'Manage admin roles',
+                'usage': 'admin-roles <add/remove> @role',
+                'permissions': 'Administrator',
+                'example': 'admin-roles add @admin'
+            },
+            'emergency-override': {
+                'description': 'Emergency override mode (admin only)',
+                'usage': 'emergency-override',
+                'permissions': 'Administrator',
+                'example': 'emergency-override'
+            },
+            'emergency-restore': {
+                'description': 'Restore from emergency mode (admin only)',
+                'usage': 'emergency-restore',
+                'permissions': 'Administrator',
+                'example': 'emergency-restore'
+            },
+            
+            # Server Security Commands
+            'lockdown': {
+                'description': 'Lock down the server',
+                'usage': 'lockdown [reason]',
+                'permissions': 'Administrator',
+                'example': 'lockdown Security threat'
+            },
+            'unlockdown': {
+                'description': 'Unlock the server',
+                'usage': 'unlockdown',
+                'permissions': 'Administrator',
+                'example': 'unlockdown'
+            },
+            'scam-domains': {
+                'description': 'Manage scam domains',
+                'usage': 'scam-domains <add/remove/list> [domain]',
+                'permissions': 'Administrator',
+                'example': 'scam-domains add example.com'
+            },
+            'anti-alt': {
+                'description': 'Configure anti-alt account protection',
+                'usage': 'anti-alt <enable/disable/status>',
+                'permissions': 'Administrator',
+                'example': 'anti-alt enable'
+            },
+            
+            # Mass Management Commands
+            'mass-ban': {
+                'description': 'Mass ban users (admin only)',
+                'usage': 'mass-ban <reason>',
+                'permissions': 'Administrator',
+                'example': 'mass-ban Raid cleanup'
+            },
+            'mass-kick': {
+                'description': 'Mass kick users (admin only)',
+                'usage': 'mass-kick <reason>',
+                'permissions': 'Administrator',
+                'example': 'mass-kick Cleanup'
+            },
+            'prune': {
+                'description': 'Prune inactive members',
+                'usage': 'prune <days> [reason]',
+                'permissions': 'Administrator',
+                'example': 'prune 30 Inactive cleanup'
+            },
+            'clear-messages': {
+                'description': 'Clear messages from a channel',
+                'usage': 'clear-messages <amount> [reason]',
+                'permissions': 'Manage Messages',
+                'example': 'clear-messages 100 Spam cleanup'
+            },
+            
+            # CAPTCHA Verification Commands
+            'verify-captcha': {
+                'description': 'Verify CAPTCHA for a user',
+                'usage': 'verify-captcha @user',
+                'permissions': 'Manage Messages',
+                'example': 'verify-captcha @user'
+            },
+            'captcha-verify': {
+                'description': 'CAPTCHA verification process',
+                'usage': 'captcha-verify',
+                'permissions': 'None',
+                'example': 'captcha-verify'
+            },
+            'captcha-status': {
+                'description': 'Check CAPTCHA status',
+                'usage': 'captcha-status',
+                'permissions': 'None',
+                'example': 'captcha-status'
+            },
+            'captcha-reset': {
+                'description': 'Reset CAPTCHA for a user',
+                'usage': 'captcha-reset @user',
+                'permissions': 'Manage Messages',
+                'example': 'captcha-reset @user'
+            },
+            'captcha-stats': {
+                'description': 'Show CAPTCHA statistics',
+                'usage': 'captcha-stats',
+                'permissions': 'None',
+                'example': 'captcha-stats'
+            },
+            
+            # Command Scopes Commands
+            'scope': {
+                'description': 'Set command scope',
+                'usage': 'scope <command> <scope>',
+                'permissions': 'Administrator',
+                'example': 'scope warn channel'
+            },
+            'scope-reset': {
+                'description': 'Reset command scope',
+                'usage': 'scope-reset <command>',
+                'permissions': 'Administrator',
+                'example': 'scope-reset warn'
+            },
+            'scopes': {
+                'description': 'List all command scopes',
+                'usage': 'scopes',
+                'permissions': 'None',
+                'example': 'scopes'
+            },
+            
+            # Abuse Prevention Commands
+            'cooldowns': {
+                'description': 'Check command cooldowns',
+                'usage': 'cooldowns [@user]',
+                'permissions': 'None',
+                'example': 'cooldowns @user'
+            },
+            'reset-cooldowns': {
+                'description': 'Reset cooldowns for a user',
+                'usage': 'reset-cooldowns @user',
+                'permissions': 'Administrator',
+                'example': 'reset-cooldowns @user'
+            },
+            'abuse-stats': {
+                'description': 'Show abuse prevention statistics',
+                'usage': 'abuse-stats',
+                'permissions': 'None',
+                'example': 'abuse-stats'
+            },
+            'emergency-stop': {
+                'description': 'Emergency stop all commands (admin only)',
+                'usage': 'emergency-stop',
+                'permissions': 'Administrator',
+                'example': 'emergency-stop'
+            },
+            
+            # Dashboard Commands
+            'dashboard': {
+                'description': 'Show bot dashboard',
+                'usage': 'dashboard',
+                'permissions': 'None',
+                'example': 'dashboard'
+            },
+            'status': {
+                'description': 'Show bot status',
+                'usage': 'status',
+                'permissions': 'None',
+                'example': 'status'
+            },
+            'ping': {
+                'description': 'Check bot latency',
+                'usage': 'ping',
+                'permissions': 'None',
+                'example': 'ping'
+            },
+            'health': {
+                'description': 'Show bot health status',
+                'usage': 'health',
+                'permissions': 'None',
+                'example': 'health'
+            },
+            
+            # Enhanced Polls Commands
+            'poll': {
+                'description': 'Create a poll',
+                'usage': 'poll <question> | <option1> | <option2> [| <option3>...]',
+                'permissions': 'None',
+                'example': 'poll What is your favorite color? | Red | Blue | Green'
+            },
+            'quickpoll': {
+                'description': 'Create a quick yes/no poll',
+                'usage': 'quickpoll <question>',
+                'permissions': 'None',
+                'example': 'quickpoll Do you like pizza?'
+            },
+            'poll-results': {
+                'description': 'Show poll results',
+                'usage': 'poll-results <poll_id>',
+                'permissions': 'None',
+                'example': 'poll-results 12345'
+            },
+            
+            # Enhanced Self Roles Commands
+            'selfroles': {
+                'description': 'Show available self roles',
+                'usage': 'selfroles',
+                'permissions': 'None',
+                'example': 'selfroles'
+            },
+            'setup-selfroles': {
+                'description': 'Setup self roles (admin only)',
+                'usage': 'setup-selfroles',
+                'permissions': 'Administrator',
+                'example': 'setup-selfroles'
+            },
+            
+            # Enhanced Verification Commands
+            'verify': {
+                'description': 'Verify your account',
+                'usage': 'verify',
+                'permissions': 'None',
+                'example': 'verify'
+            },
+            'setup-verification': {
+                'description': 'Setup verification system (admin only)',
+                'usage': 'setup-verification',
+                'permissions': 'Administrator',
+                'example': 'setup-verification'
+            },
+            
+            # Basic Commands
+            'rules': {
+                'description': 'Show server rules',
+                'usage': 'rules',
+                'permissions': 'None',
+                'example': 'rules'
+            },
+            'ticket': {
+                'description': 'Create a support ticket',
+                'usage': 'ticket [reason]',
+                'permissions': 'None',
+                'example': 'ticket Need help with something'
+            },
+            
+            # Owner Commands
+            'eval': {
+                'description': 'Evaluate Python code (owner only)',
+                'usage': 'eval <code>',
+                'permissions': 'Bot Owner',
+                'example': 'eval print("Hello World")'
+            },
+            'reload': {
+                'description': 'Reload a cog (owner only)',
+                'usage': 'reload <cog_name>',
+                'permissions': 'Bot Owner',
+                'example': 'reload help_system'
+            },
+            'load': {
+                'description': 'Load a cog (owner only)',
+                'usage': 'load <cog_name>',
+                'permissions': 'Bot Owner',
+                'example': 'load help_system'
+            },
+            'unload': {
+                'description': 'Unload a cog (owner only)',
+                'usage': 'unload <cog_name>',
+                'permissions': 'Bot Owner',
+                'example': 'unload help_system'
+            },
+            
+            # Error Handler Commands
+            'error-stats': {
+                'description': 'Show error statistics',
+                'usage': 'error-stats',
+                'permissions': 'Administrator',
+                'example': 'error-stats'
+            },
+            'error-reset': {
+                'description': 'Reset error statistics',
+                'usage': 'error-reset',
+                'permissions': 'Administrator',
+                'example': 'error-reset'
+            },
+            'debug': {
+                'description': 'Debug information',
+                'usage': 'debug',
+                'permissions': 'Administrator',
+                'example': 'debug'
+            },
+            
+            # Other Commands
+            'automod': {
+                'description': 'Configure auto-moderation',
+                'usage': 'automod <setting> <value>',
+                'permissions': 'Administrator',
+                'example': 'automod spam_threshold 5'
+            },
+            'mod_case': {
+                'description': 'View moderation case',
+                'usage': 'mod_case <case_id>',
+                'permissions': 'None',
+                'example': 'mod_case C-12345'
+            },
+            'mod_cases': {
+                'description': 'List moderation cases',
+                'usage': 'mod_cases [@user]',
+                'permissions': 'None',
+                'example': 'mod_cases @user'
+            },
+            'message-log': {
+                'description': 'View message logs',
+                'usage': 'message-log [@user]',
+                'permissions': 'None',
+                'example': 'message-log @user'
+            },
+            'basic_selfroles': {
+                'description': 'Basic self roles setup',
+                'usage': 'basic_selfroles',
+                'permissions': 'Administrator',
+                'example': 'basic_selfroles'
+            },
+            'basic_verify': {
+                'description': 'Basic verification setup',
+                'usage': 'basic_verify',
+                'permissions': 'Administrator',
+                'example': 'basic_verify'
+            },
+            'siren': {
+                'description': 'Trigger siren easter egg',
+                'usage': 'siren',
+                'permissions': 'None',
+                'example': 'siren'
+            },
+            'test_siren': {
+                'description': 'Test siren system',
+                'usage': 'test_siren',
+                'permissions': 'Administrator',
+                'example': 'test_siren'
             }
         }
         
