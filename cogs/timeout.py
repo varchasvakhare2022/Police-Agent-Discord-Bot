@@ -33,10 +33,10 @@ class Timeout(commands.Cog):
             title="Timeout",
             description = inspect.cleandoc(
                 f"""
-                **Offender:** {member.name}#{member.discriminator}
+                **Offender:** {member.display_name}
                 **Duration** {time} <t:{round(epoch+duration)}>
                 **Reason:** {reason}
-                **Responsible moderator:** {ctx.author.name}#{ctx.author.discriminator}
+                **Responsible moderator:** {ctx.author.display_name}
                 """
             ),
             color=0xff8b8b

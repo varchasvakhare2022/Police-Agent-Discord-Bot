@@ -1,0 +1,15 @@
+# Discord Bot Configuration
+BOT_TOKEN=your_bot_token_here
+APPLICATION_ID=your_application_id_here
+
+# Guild ID for slash commands
+GUILD_ID=your_guild_id_here
+
+# Amari Bot API Token (optional)
+AMARI_TOKEN=your_amari_token_here
+
+# Storage Configuration (optional)
+# Set to 'database' for cloud deployment, 'json' for local development
+STORAGE_TYPE=json
+# Database URL (only needed if STORAGE_TYPE=database)
+# DATABASE_URL=postgresql://username:password@host:port/database

@@ -1,6 +1,4 @@
-from ast import Or
 import inspect
-from os import name
 import asyncio
 
 import discord
@@ -26,7 +24,7 @@ class Ticket(commands.Cog):
                 ticket = await interaction.guild.create_text_channel(
                     category=category,
                     topic=interaction.user.id,
-                    name=f"Ticket-{interaction.user.name}",
+                    name=f"Ticket-{interaction.user.display_name}",
                     overwrites={
                         interaction.guild.default_role: discord.PermissionOverwrite(view_channel=False),
                         interaction.user: discord.PermissionOverwrite(view_channel=True),

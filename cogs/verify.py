@@ -1,4 +1,3 @@
-from ast import Or
 import inspect
 
 import discord

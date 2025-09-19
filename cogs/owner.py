@@ -3,10 +3,10 @@ import re
 import traceback
 import io
 import contextlib
+import ast
 
 import discord
 from discord.ext import commands
-import import_expression
 
 class Owner(commands.Cog):
     def __init__(self, bot):
@@ -63,7 +63,7 @@ class Owner(commands.Cog):
         to_compile = f'async def func():\n{textwrap.indent(body, "  ")}'
 
         try:
-            import_expression.exec(to_compile, env)
+            exec(to_compile, env)
         except Exception as e:
             return await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
 
@@ -99,20 +99,16 @@ class Owner(commands.Cog):
         await self._check_jishaku(ctx)
 
         command = self.bot.get_command('jishaku load')
-        await ctx.invoke(
-            ctx, *extensions
-        )
+        await ctx.invoke(command, *extensions)
 
     @commands.command()
-    async def load(self, ctx: commands.Context, *extensions: str):
+    async def unload(self, ctx: commands.Context, *extensions: str):
         """Unloads an extension."""
         
         await self._check_jishaku(ctx)
 
         command = self.bot.get_command('jishaku unload')
-        await ctx.invoke(
-            ctx, *extensions
-        )
+        await ctx.invoke(command, *extensions)
 
     @commands.command(name='reload', aliases=['re'])
     async def _reload(self, ctx: commands.Context, *extensions: str):
@@ -121,9 +117,7 @@ class Owner(commands.Cog):
         await self._check_jishaku(ctx)
 
         command = self.bot.get_command('jishaku reload')
-        await ctx.invoke(
-            ctx, *extensions
-        )
+        await ctx.invoke(command, *extensions)
     
 async def setup(bot):
     await bot.add_cog(Owner(bot))

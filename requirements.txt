@@ -1,9 +1,6 @@
-git+https://github.com/Rapptz/discord.py
-git+https://github.com/Gorialis/jishaku
-git+https://github.com/TheF1ng3r/amari.py
-aiohttp
-import_expression
-discord-ext-menus
-asyncpg
-pytz
-amari.py
+discord.py>=2.3.2
+jishaku>=2.5.0
+aiohttp>=3.9.0
+pytz>=2023.3
+python-dotenv>=1.0.0
+amari.py>=1.0.0

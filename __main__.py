@@ -1,27 +1,30 @@
-from ast import mod
 import logging
-import random
 import os
-from re import sub
 import traceback
-import sys
 import asyncio
 import inspect
-import logging
+from dotenv import load_dotenv
 
 import discord
 from discord import app_commands
 from discord.ext import commands, tasks
-import asyncpg
+from json_storage import JSONStorage
 
-BOT_TOKEN = 'OTE5MTQ5MDMzODIwNDE4MDU5.GSEdZU.pSrYTaHYZWi7vKJvwdm0WvFHYww6ahIeoN_PZA'
-POSTGRES_DSN = 'postgres://lhjqkocefjmnmu:92530a413343e2a308556d0b2c76a72596a44640b3767c72cd53cc4eef8df956@ec2-3-224-125-117.compute-1.amazonaws.com:5432/d4teouam269f5t'
+# Load environment variables
+load_dotenv()
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+APPLICATION_ID = int(os.getenv('APPLICATION_ID', '919149033820418059'))
+GUILD_ID = int(os.getenv('GUILD_ID', '760134264242700320'))
+
+if not BOT_TOKEN:
+    raise ValueError("BOT_TOKEN environment variable is required")
 
 async def _prefix_callable(bot: commands.AutoShardedBot, message: discord.Message):
-    if not hasattr(bot, 'db'): # hasnt connected
+    if not hasattr(bot, 'storage'): # storage not initialized
         return
 
-    prefix = await bot.db.fetchval('SELECT prefix FROM prefixes WHERE guild_id = $1', message.guild.id) or '-' # default pre
+    prefix = bot.storage.get_prefix(message.guild.id) if message.guild else '-'
     
     base = [
         f'<@{bot.user.id}>',
@@ -301,7 +304,7 @@ class SelfRoles(discord.ui.View):
             await interaction.response.send_message(f'I have added {polls.mention} to you', ephemeral=True)
             await interaction.user.add_roles(polls)
 #---------------------------------------------------------------------------------------------------------
-MY_GUILD = discord.Object(id=760134264242700320)
+MY_GUILD = discord.Object(id=GUILD_ID)
 
 os.environ['JISHAKU_HIDE'] = 'True'
 os.environ['JISHAKU_NO_UNDERSCORE'] = 'True'
@@ -329,8 +332,7 @@ class Bot(commands.AutoShardedBot):
         if await bot.is_owner(ctx.author):
             return True
 
-        res = await bot.db.fetchval('SELECT user_id FROM blacklist WHERE user_id = $1', ctx.author.id)
-        if res: # db contains an entry - blacklisted so return False (cant use bot)
+        if bot.storage.is_blacklisted(ctx.author.id):
             delete_after: int = 7
             
             embed = discord.Embed(
@@ -383,23 +385,20 @@ class Bot(commands.AutoShardedBot):
 
         self.change_status.start()
     
-    async def _create_pool(self):
+    async def _init_storage(self):
+        """Initialize JSON storage system"""
         try:
-            self.db = await asyncpg.create_pool(dsn=POSTGRES_DSN)
+            self.storage = JSONStorage()
+            print('JSON storage initialized.')
         except Exception as exc:
-            print('Failed to connect to database.')
+            print('Failed to initialize JSON storage.')
             traceback.print_exc()
-        else:
-            print('Database connected.')
-
-        await self.db.execute('CREATE TABLE IF NOT EXISTS prefixes (guild_id BIGINT, prefix TEXT)')
-        await self.db.execute('CREATE TABLE IF NOT EXISTS blacklist (user_id BIGINT)')
 
     async def setup_hook(self) -> None:
         self.tree.copy_global_to(guild=MY_GUILD)
         await self.tree.sync(guild=MY_GUILD)
         asyncio.create_task(self._startup_task())
-        await self._create_pool()
+        await self._init_storage()
         self.add_view(Verify())
         self.add_view(Ticket())
         self.add_view(TicketClose())
@@ -413,5 +412,5 @@ class Bot(commands.AutoShardedBot):
 intents = discord.Intents.all()
 
 if __name__ == '__main__':
-    bot = Bot(intents=intents, application_id=919149033820418059)
+    bot = Bot(intents=intents, application_id=APPLICATION_ID)
     bot.run()

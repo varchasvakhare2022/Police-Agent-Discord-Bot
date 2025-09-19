@@ -5,26 +5,11 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-MY_GUILD = discord.Object(id=760134264242700320)
-
-
-class MyClient(discord.Client):
-    def __init__(self, *, intents: discord.Intents, application_id: int):
-        super().__init__(intents=intents, application_id=application_id)
-        self.tree = app_commands.CommandTree(self)
-    async def setup_hook(self):
-        self.tree.copy_global_to(guild=MY_GUILD)
-        await self.tree.sync(guild=MY_GUILD)
-
-intents = discord.Intents.default()
-
-client = MyClient(intents=intents, application_id=919149033820418059)
-
 class Poll_Slash(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @client.tree.command()
+    @app_commands.command(name="poll")
     @app_commands.describe(question='enter question for the poll')
     async def poll(self, interaction: discord.Interaction, question: str) -> None:
         """Create a poll with slash command"""

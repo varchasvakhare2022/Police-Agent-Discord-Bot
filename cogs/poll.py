@@ -1,4 +1,3 @@
-from ast import Or
 import inspect
 
 import discord
@@ -19,7 +18,7 @@ class Poll(commands.Cog):
         """Allows you to make a poll"""
         
         embed = discord.Embed(
-            title=f'{ctx.message.author.name} asks',
+            title=f'{ctx.author.display_name} asks',
             description=f'{message}', color=0x797EF6
         )
         embed.set_footer(text='react with any one option')

@@ -18,9 +18,9 @@ class Kick(commands.Cog):
             title="Kick",
             description = inspect.cleandoc(
                 f"""
-                **Offender:** {member.name}#{member.discriminator}
+                **Offender:** {member.display_name}
                 **Reason:** {reason}
-                **Responsible moderator:** {ctx.author.name}#{ctx.author.discriminator}
+                **Responsible moderator:** {ctx.author.display_name}
                 """
             ),
             color=0xff8b8b
@@ -45,12 +45,12 @@ class Kick(commands.Cog):
             if reason==None:
                 reason="No reason provided"
                 await ctx.guild.kick(member)
-                await ctx.send(f"Successfully kicked {member.name}#{member.discriminator}")
+                await ctx.send(f"Successfully kicked {member.display_name}")
                 await log_channel.send(embed=embed)
                 await ctx.message.delete()
             else:
                 await ctx.guild.kick(member, reason=reason)
-                await ctx.send(f"Successfully kicked {member.name}#{member.discriminator}")
+                await ctx.send(f"Successfully kicked {member.display_name}")
                 await log_channel.send(embed=embed)
                 await ctx.message.delete()
 

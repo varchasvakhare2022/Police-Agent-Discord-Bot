@@ -1,4 +1,5 @@
 import inspect
+import os
 from amari import AmariClient
 import discord
 from discord.ext import commands
@@ -16,15 +17,20 @@ class Amari(commands.Cog):
     )
     async def amari(self, ctx: commands.Context, member: discord.Member = None) -> None:
         """Check your amari level"""
-        amari = AmariClient("e5e71cc6daa28c3d9bc848ee.435561.0813a19d4b9746eacf0d4e68857")
+        amari_token = os.getenv('AMARI_TOKEN')
+        if not amari_token:
+            await ctx.send("Amari API token not configured.")
+            return
+        amari = AmariClient(amari_token)
         
         if member == None:
             
             ctx_id = ctx.author.id
-            ctx_user = await amari.fetch_user(760134264242700320, ctx_id)
+            guild_id = int(os.getenv('GUILD_ID', '760134264242700320'))
+            ctx_user = await amari.fetch_user(guild_id, ctx_id)
         
             embed = discord.Embed(
-                title=f"{ctx.author.name}'s Amari Rank",
+                title=f"{ctx.author.display_name}'s Amari Rank",
                 description = inspect.cleandoc(
                     f"""
                     **Level**
@@ -44,10 +50,11 @@ class Amari(commands.Cog):
         else:
             
             member_id = member.id
-            member_user = await amari.fetch_user(760134264242700320, member_id)
+            guild_id = int(os.getenv('GUILD_ID', '760134264242700320'))
+            member_user = await amari.fetch_user(guild_id, member_id)
             
             embed = discord.Embed(
-                title=f"{member.name}'s Amari Rank",
+                title=f"{member.display_name}'s Amari Rank",
                 description = inspect.cleandoc(
                     f"""
                     **Level**
