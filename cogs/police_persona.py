@@ -206,7 +206,7 @@ class PolicePersona(commands.Cog):
         
         return header + response
     
-    @commands.command(name='police_config')
+    @commands.command(name='police config')
     @commands.has_permissions(administrator=True)
     async def police_config_command(self, ctx, setting: str, *, value: str):
         """Configure police persona settings (admin only)"""
@@ -234,7 +234,7 @@ class PolicePersona(commands.Cog):
         
         self.save_data()
     
-    @commands.command(name='police_status')
+    @commands.command(name='police status')
     async def police_status_command(self, ctx):
         """Show current police persona configuration"""
         embed = discord.Embed(
@@ -277,7 +277,7 @@ class PolicePersona(commands.Cog):
         
         await ctx.send(embed=embed)
     
-    @commands.command(name='police_test')
+    @commands.command(name='police test')
     @commands.has_permissions(manage_messages=True)
     async def police_test_command(self, ctx, response_type: str = 'general'):
         """Test police persona responses"""
@@ -289,7 +289,7 @@ class PolicePersona(commands.Cog):
         
         await ctx.send(formatted_response)
     
-    @commands.command(name='police_responses')
+    @commands.command(name='police responses')
     @commands.has_permissions(manage_messages=True)
     async def police_responses_command(self, ctx, response_type: str = None):
         """View available police responses"""
@@ -326,7 +326,7 @@ class PolicePersona(commands.Cog):
             
             await ctx.send(embed=embed)
     
-    @commands.command(name='police_patrol')
+    @commands.command(name='police patrol')
     async def police_patrol_command(self, ctx):
         """Police patrol announcement"""
         response = self.get_police_response('general')
@@ -334,7 +334,7 @@ class PolicePersona(commands.Cog):
         
         await ctx.send(formatted_response)
     
-    @commands.command(name='police_arrest')
+    @commands.command(name='police arrest')
     @commands.has_permissions(manage_messages=True)
     async def police_arrest_command(self, ctx, member: discord.Member, *, reason: str):
         """Arrest a user with police persona"""
@@ -343,7 +343,7 @@ class PolicePersona(commands.Cog):
         
         await ctx.send(formatted_response)
     
-    @commands.command(name='police_warning')
+    @commands.command(name='police warning')
     @commands.has_permissions(manage_messages=True)
     async def police_warning_command(self, ctx, member: discord.Member, *, reason: str):
         """Issue a police warning"""

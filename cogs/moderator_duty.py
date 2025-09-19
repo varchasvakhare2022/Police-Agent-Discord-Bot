@@ -480,7 +480,7 @@ class ModeratorDutyMode(commands.Cog):
         
         await ctx.send(embed=embed)
     
-    @commands.command(name='report_queue')
+    @commands.command(name='report queue')
     @commands.has_permissions(manage_messages=True)
     async def report_queue_command(self, ctx):
         """View the report queue"""
@@ -518,7 +518,7 @@ class ModeratorDutyMode(commands.Cog):
         embed.set_footer(text=f"Showing {len(pending_reports)} pending reports")
         await ctx.send(embed=embed)
     
-    @commands.command(name='resolve_report')
+    @commands.command(name='resolve report')
     @commands.has_permissions(manage_messages=True)
     async def resolve_report_command(self, ctx, report_id: str):
         """Resolve a report"""
@@ -558,7 +558,7 @@ class ModeratorDutyMode(commands.Cog):
         
         await ctx.send(embed=embed)
     
-    @commands.command(name='duty_config')
+    @commands.command(name='duty config')
     @commands.has_permissions(administrator=True)
     async def duty_config_command(self, ctx, setting: str, *, value: str):
         """Configure duty mode settings (admin only)"""

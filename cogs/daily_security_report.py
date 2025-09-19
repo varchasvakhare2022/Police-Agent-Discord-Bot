@@ -220,9 +220,9 @@ class DailySecurityReport(commands.Cog):
         except Exception as e:
             print(f"Error sending report to logs channel: {e}")
     
-    @tasks.loop(hours=24)
+    @tasks.loop(time=datetime.time(hour=18, minute=30))  # 12:00 AM IST (UTC+5:30)
     async def daily_report_task(self):
-        """Daily report task - runs every 24 hours"""
+        """Daily report task - runs at 12:00 AM IST"""
         if not self.report_config['enabled']:
             return
         
@@ -244,14 +244,14 @@ class DailySecurityReport(commands.Cog):
         """Wait until bot is ready"""
         await self.bot.wait_until_ready()
     
-    @commands.command(name='security_report')
+    @commands.command(name='security report')
     @commands.has_permissions(manage_messages=True)
     async def manual_security_report(self, ctx):
         """Manually generate and send security report"""
         embed = self.generate_security_report()
         await ctx.send(embed=embed)
     
-    @commands.command(name='report_config')
+    @commands.command(name='report config')
     @commands.has_permissions(administrator=True)
     async def report_config_command(self, ctx, setting: str, value: str):
         """Configure daily security reports"""
@@ -289,7 +289,7 @@ class DailySecurityReport(commands.Cog):
         
         self.save_data()
     
-    @commands.command(name='report_status')
+    @commands.command(name='report status')
     @commands.has_permissions(manage_messages=True)
     async def report_status_command(self, ctx):
         """Show current report configuration"""
@@ -342,14 +342,34 @@ class DailySecurityReport(commands.Cog):
         
         await ctx.send(embed=embed)
     
-    @commands.command(name='test_report')
+    @commands.command(name='test report')
     @commands.has_permissions(administrator=True)
     async def test_report_command(self, ctx):
         """Test the daily security report system"""
         embed = self.generate_security_report()
         await ctx.send("🧪 **Test Report Generated:**", embed=embed)
     
-    @commands.command(name='add_violation')
+    @commands.command(name='stop daily reports')
+    @commands.has_permissions(administrator=True)
+    async def stop_daily_reports_command(self, ctx):
+        """Stop the daily security reports"""
+        if self.daily_report_task.is_running():
+            self.daily_report_task.cancel()
+            await ctx.send("✅ Daily security reports have been stopped.")
+        else:
+            await ctx.send("❌ Daily security reports are not currently running.")
+    
+    @commands.command(name='start daily reports')
+    @commands.has_permissions(administrator=True)
+    async def start_daily_reports_command(self, ctx):
+        """Start the daily security reports"""
+        if not self.daily_report_task.is_running():
+            self.daily_report_task.start()
+            await ctx.send("✅ Daily security reports have been started. They will run at 12:00 AM IST daily.")
+        else:
+            await ctx.send("❌ Daily security reports are already running.")
+    
+    @commands.command(name='add violation')
     @commands.has_permissions(manage_messages=True)
     async def add_violation_command(self, ctx, violation_type: str, user: discord.Member, *, reason: str):
         """Manually add a violation to the daily report"""

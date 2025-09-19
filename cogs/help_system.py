@@ -272,13 +272,13 @@ class HelpMenuView(discord.ui.View):
         embed = await self.get_category_embed(self.categories[12])
         await interaction.response.edit_message(embed=embed, view=self)
     
-    @discord.ui.button(label="🔐 Owner", style=discord.ButtonStyle.success, row=5)
+    @discord.ui.button(label="🔐 Owner", style=discord.ButtonStyle.success, row=3)
     async def owner_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.current_page = 13
         embed = await self.get_category_embed(self.categories[13])
         await interaction.response.edit_message(embed=embed, view=self)
     
-    @discord.ui.button(label="❌ Close", style=discord.ButtonStyle.danger, row=5)
+    @discord.ui.button(label="❌ Close", style=discord.ButtonStyle.danger, row=3)
     async def close_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.edit_message(content="Help menu closed.", embed=None, view=None)
 
@@ -771,6 +771,12 @@ class HelpSystem(commands.Cog):
                 'permissions': 'Administrator',
                 'example': 'start_daily_reports'
             },
+            'stop_daily_reports': {
+                'description': 'Stop daily reports',
+                'usage': 'stop_daily_reports',
+                'permissions': 'Administrator',
+                'example': 'stop_daily_reports'
+            },
             
             # Admin Bypass Commands
             'bypass-status': {
@@ -1241,7 +1247,7 @@ class HelpSystem(commands.Cog):
             embed = await view.get_main_embed()
             await ctx.send(embed=embed, view=view)
     
-    @commands.command(name='help_categories')
+    @commands.command(name='help categories')
     async def help_categories_command(self, ctx):
         """Show all command categories"""
         categories = self.get_command_categories()

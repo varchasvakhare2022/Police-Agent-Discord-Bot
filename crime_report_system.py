@@ -92,9 +92,9 @@ class CrimeReportSystem:
             await channel.send(embed=embed)
             self.reset_daily_stats()  # Reset after sending report
     
-    @tasks.loop(hours=24)
+    @tasks.loop(time=datetime.time(hour=18, minute=30))  # 12:00 AM IST (UTC+5:30)
     async def daily_report_task(self):
-        """Task to send daily reports every 24 hours"""
+        """Task to send daily reports at 12:00 AM IST"""
         # You can set your report channel ID here
         report_channel_id = 123456789012345678  # Replace with your channel ID
         await self.send_daily_report(report_channel_id)

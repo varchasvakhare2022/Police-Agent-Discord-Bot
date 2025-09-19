@@ -590,6 +590,11 @@ class CommandErrorHandler(commands.Cog):
                 'description': 'Start daily reports',
                 'usage': 'start daily reports',
                 'example': 'start daily reports'
+            },
+            'stop daily reports': {
+                'description': 'Stop daily reports',
+                'usage': 'stop daily reports',
+                'example': 'stop daily reports'
             }
         }
         
