@@ -6,7 +6,7 @@ import inspect
 from dotenv import load_dotenv
 
 import discord
-from discord import app_commands
+# Removed app_commands import - bot is now prefix-only
 from discord.ext import commands, tasks
 from json_storage import JSONStorage
 
@@ -396,8 +396,7 @@ class Bot(commands.AutoShardedBot):
             traceback.print_exc()
 
     async def setup_hook(self) -> None:
-        self.tree.copy_global_to(guild=MY_GUILD)
-        await self.tree.sync(guild=MY_GUILD)
+        # Removed slash command sync - bot is now prefix-only
         asyncio.create_task(self._startup_task())
         await self._init_storage()
         self.add_view(Verify())

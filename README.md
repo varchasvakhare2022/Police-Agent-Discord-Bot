@@ -94,7 +94,7 @@ Police Agent excels at keeping your server safe and organized:
 - **User Blacklist** - Ban users from using the bot entirely
 - **Permission Checks** - Automatic role hierarchy and permission validation
 - **Comprehensive Logging** - Automatic log channel creation and management
-- **Slash Commands** - Modern Discord slash commands for all moderation actions
+- **Prefix Commands** - Traditional Discord prefix commands for all moderation actions
 - **Abuse Prevention** - Cooldowns, rate limiting, and mass action protection
 
 ### **🛡️ Advanced Anti-Spam & Scam Protection**
@@ -232,17 +232,17 @@ police-agent/
 │   ├── admin.py            # 👑 Admin commands (prefix, blacklist)
 │   ├── amari.py            # 🎮 Amari bot integration
 │   ├── antispam.py         # 🛡️ Anti-spam and scam detection
-│   ├── antispam_slash.py   # 🛡️ Anti-spam slash commands
+│   ├── antispam.py         # 🛡️ Anti-spam prefix commands
 │   ├── ban.py              # 🚫 Ban and unban commands
 │   ├── dashboard.py        # 📊 Bot dashboard and metrics
 │   ├── error_handler.py    # 🐛 Error handling and debugging
 │   ├── help_system.py      # 📖 Paginated help system
 │   ├── kick.py             # 👢 Kick command
 │   ├── logging.py          # 📝 Comprehensive logging system
-│   ├── moderation_slash.py # 🔗 Moderation slash commands
+│   ├── moderation.py       # 🔗 Moderation prefix commands
 │   ├── owner.py            # 🔐 Owner-only commands
-│   ├── ping_slash.py       # 📡 Ping slash command
-│   ├── poll_slash.py       # 📊 Poll slash command
+│   ├── ping.py             # 📡 Ping prefix command
+│   ├── poll.py             # 📊 Poll prefix command
 │   ├── polls_enhanced.py   # 🎯 Enhanced interactive polls
 │   ├── selfroles_enhanced.py # 🎭 Enhanced self-role system
 │   ├── stats.py            # 📈 Bot statistics
@@ -309,7 +309,7 @@ python __main__.py
 ### **Required Environment Variables**
 - `BOT_TOKEN` - Your Discord bot token
 - `APPLICATION_ID` - Your Discord application ID  
-- `GUILD_ID` - Discord server ID for slash commands
+- `GUILD_ID` - Discord server ID for bot operations
 
 ### **Optional Environment Variables**
 - `AMARI_TOKEN` - Amari bot API token for level tracking
