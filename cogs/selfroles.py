@@ -7,7 +7,7 @@ class SelfRole(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.command(name="selfroles")
+    @commands.command(name="basic_selfroles")
     @commands.check_any(
         commands.has_any_role(903238046323998720),
         commands.has_permissions(administrator=True)

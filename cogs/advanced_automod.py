@@ -227,7 +227,7 @@ class AdvancedAutoMod(commands.Cog):
         
         # Check if user is a new member (joined within last 5 minutes)
         member_join_time = message.author.joined_at
-        if member_join_time and (datetime.now() - member_join_time).total_seconds() < 300:
+        if member_join_time and (datetime.now(member_join_time.tzinfo) - member_join_time).total_seconds() < 300:
             self.member_messages[guild_id].append((message.author.id, current_time))
             
             # Clean old entries

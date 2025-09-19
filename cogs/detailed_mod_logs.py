@@ -308,7 +308,7 @@ class DetailedModLogs(commands.Cog):
             print(f"Error creating mod log channel: {e}")
             return None
 
-    @commands.command(name="case")
+    @commands.command(name="mod_case")
     @commands.has_permissions(administrator=True)
     async def view_case(self, ctx: commands.Context, case_id: str):
         """View detailed information about a specific case"""
@@ -370,7 +370,7 @@ class DetailedModLogs(commands.Cog):
         
         await ctx.send(embed=embed)
 
-    @commands.command(name="cases")
+    @commands.command(name="mod_cases")
     @commands.has_permissions(administrator=True)
     async def list_cases(self, ctx: commands.Context, user: discord.Member = None, limit: int = 10):
         """List recent mod cases"""

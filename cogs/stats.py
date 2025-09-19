@@ -8,7 +8,7 @@ class Stats(commands.Cog):
         self.bot = bot
 
     @commands.command(
-        name="stats", aliases = ["statistics", "ping", "botinfo"]
+        name="stats", aliases = ["statistics", "botinfo"]
     )
     async def stats(self, ctx: commands.Context) -> None:
         """Check information about the bot."""

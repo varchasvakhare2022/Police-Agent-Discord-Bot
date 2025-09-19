@@ -8,7 +8,7 @@ class Poll(commands.Cog):
         self.bot = bot
 
     @commands.command(
-        name="poll"
+        name="simple_poll"
     )
     @commands.check_any(
         commands.has_any_role(917120712840462416),

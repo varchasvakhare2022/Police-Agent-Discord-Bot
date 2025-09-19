@@ -7,7 +7,7 @@ class Verify(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.command(name="verify")
+    @commands.command(name="basic_verify")
     @commands.check_any(
         commands.has_any_role(903238046323998720),
         commands.has_permissions(administrator=True)

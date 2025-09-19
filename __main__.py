@@ -323,7 +323,8 @@ class Bot(commands.AutoShardedBot):
                 868465221373665351,
                 748552378504052878 # pandey
             ],
-            application_id=application_id
+            application_id=application_id,
+            help_command=None  # Disable built-in help command
         )
         self.add_check(self.blacklisted_check)
     

@@ -285,7 +285,7 @@ class ComprehensiveLogging(commands.Cog):
     
     @commands.command(name='bot_logs')
     @commands.has_permissions(administrator=True)
-    async def bot_logs_command(self, ctx, log_type: str = 'all', limit: int = 20):
+    async def logs_command(self, ctx, log_type: str = 'all', limit: int = 20):
         """View bot logs (admin only)"""
         if log_type.lower() == 'all':
             logs = self.bot_logs[-limit:]

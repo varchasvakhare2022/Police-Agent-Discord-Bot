@@ -3,6 +3,7 @@ from discord.ext import commands
 import traceback
 import inspect
 from datetime import datetime
+from collections import defaultdict
 
 class ErrorHandler(commands.Cog):
     def __init__(self, bot):
