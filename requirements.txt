@@ -4,6 +4,7 @@ git+https://github.com/TheF1ng3r/amari.py
 aiohttp
 import_expression
 discord-ext-menus
-asyncpg
 pytz
 amari.py
+python-dotenv
+Pillow

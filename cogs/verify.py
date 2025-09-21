@@ -18,12 +18,18 @@ class Verify(commands.Cog):
         class Verify(discord.ui.View):
             @discord.ui.button(style=discord.ButtonStyle.green, label='Verify', custom_id='verify', emoji='<:DiscordVerified:970932623734104095>')
             async def verification_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-                verified=discord.utils.get(ctx.guild.roles, name="[0] Verified")
-                if verified in interaction.user.roles:
-                    await interaction.response.send_message('Listen bud, You are already verified and remember not to waste time of Police Agents from next time.', ephemeral=True)
+                # Get the captcha verification cog
+                captcha_cog = interaction.client.get_cog('CaptchaVerification')
+                if captcha_cog:
+                    await captcha_cog.handle_verification_attempt(interaction, interaction.user)
                 else:
-                    await interaction.response.send_message('I have given you access to the server!', ephemeral=True)
-                    await interaction.user.add_roles(verified)
+                    # Fallback to old system if captcha cog is not loaded
+                    verified = interaction.guild.get_role(903238068910309398)
+                    if verified and verified in interaction.user.roles:
+                        await interaction.response.send_message('Listen bud, You are already verified and remember not to waste time of Police Agents from next time.', ephemeral=True)
+                    else:
+                        await interaction.response.send_message('I have given you access to the server!', ephemeral=True)
+                        await interaction.user.add_roles(verified)
                 
                 
         embed = discord.Embed(

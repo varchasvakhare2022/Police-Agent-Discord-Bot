@@ -17,9 +17,9 @@ class Owner(commands.Cog):
         return await ctx.bot.is_owner(ctx.author)
     
     @commands.Cog.listener('on_message_edit')
-    async def edit_process(self, message: discord.Message):
-        if await self.bot.is_owner(message.author):
-            await self.bot.process_commands(message)
+    async def edit_process(self, before: discord.Message, after: discord.Message):
+        if await self.bot.is_owner(after.author):
+            await self.bot.process_commands(after)
 
     def cleanup_code(self, content: str) -> str:
         """Automatically removes code blocks from the code."""

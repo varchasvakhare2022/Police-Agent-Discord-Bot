@@ -12,16 +12,31 @@ import logging
 import discord
 from discord import app_commands
 from discord.ext import commands, tasks
-import asyncpg
+import os
+import json
+from dotenv import load_dotenv
 
-BOT_TOKEN = 'OTE5MTQ5MDMzODIwNDE4MDU5.GSEdZU.pSrYTaHYZWi7vKJvwdm0WvFHYww6ahIeoN_PZA'
-POSTGRES_DSN = 'postgres://lhjqkocefjmnmu:92530a413343e2a308556d0b2c76a72596a44640b3767c72cd53cc4eef8df956@ec2-3-224-125-117.compute-1.amazonaws.com:5432/d4teouam269f5t'
+# Load environment variables
+load_dotenv()
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+APPLICATION_ID = int(os.getenv('APPLICATION_ID', '919149033820418059'))
+GUILD_ID = int(os.getenv('GUILD_ID', '760134264242700320'))
+
+if not BOT_TOKEN:
+    raise ValueError("BOT_TOKEN environment variable is required")
 
 async def _prefix_callable(bot: commands.AutoShardedBot, message: discord.Message):
-    if not hasattr(bot, 'db'): # hasnt connected
-        return
-
-    prefix = await bot.db.fetchval('SELECT prefix FROM prefixes WHERE guild_id = $1', message.guild.id) or '-' # default pre
+    if not message.guild:
+        return ['-']
+    
+    # Load prefixes from JSON file
+    try:
+        with open('data/prefixes.json', 'r') as f:
+            prefixes = json.load(f)
+        prefix = prefixes.get(str(message.guild.id), '-')
+    except (FileNotFoundError, json.JSONDecodeError):
+        prefix = '-'
     
     base = [
         f'<@{bot.user.id}>',
@@ -89,14 +104,21 @@ class TicketClose(discord.ui.View):
 class Verify(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
+    
     @discord.ui.button(style=discord.ButtonStyle.green, label='Verify', custom_id='verify', emoji='<:DiscordVerified:970932623734104095>')
     async def verification_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        verified=discord.utils.get(interaction.guild.roles, name="[0] Verified")
-        if verified in interaction.user.roles:
-            await interaction.response.send_message('Listen bud, You are already verified and remember not to waste time of Police Agents from next time.', ephemeral=True)
+        # Get the captcha verification cog
+        captcha_cog = interaction.client.get_cog('CaptchaVerification')
+        if captcha_cog:
+            await captcha_cog.handle_verification_attempt(interaction, interaction.user)
         else:
-            await interaction.response.send_message('I have given you access to the server!', ephemeral=True)
-            await interaction.user.add_roles(verified)
+            # Fallback to old system if captcha cog is not loaded
+            verified = interaction.guild.get_role(903238068910309398)
+            if verified and verified in interaction.user.roles:
+                await interaction.response.send_message('Listen bud, You are already verified and remember not to waste time of Police Agents from next time.', ephemeral=True)
+            else:
+                await interaction.response.send_message('I have given you access to the server!', ephemeral=True)
+                await interaction.user.add_roles(verified)
 
 class SelfRoles(discord.ui.View):
     def __init__(self):
@@ -329,21 +351,27 @@ class Bot(commands.AutoShardedBot):
         if await bot.is_owner(ctx.author):
             return True
 
-        res = await bot.db.fetchval('SELECT user_id FROM blacklist WHERE user_id = $1', ctx.author.id)
-        if res: # db contains an entry - blacklisted so return False (cant use bot)
-            delete_after: int = 7
-            
-            embed = discord.Embed(
-                description='Unfortunately, you have been blacklisted from the bot. If you wish to know why or appeal, please join **[this server](https://discord.gg/xRquATkezz)**.'
-            )
-            await ctx.reply(
-                embed=embed,
-                delete_after=delete_after
-            )
-            await ctx.message.delete(delay=delete_after)
+        # Load blacklist from JSON file
+        try:
+            with open('data/blacklist.json', 'r') as f:
+                blacklist = json.load(f)
+            if str(ctx.author.id) in blacklist:
+                delete_after: int = 7
+                
+                embed = discord.Embed(
+                    description='Unfortunately, you have been blacklisted from the bot. If you wish to know why or appeal, please join **[this server](https://discord.gg/xRquATkezz)**.'
+                )
+                await ctx.reply(
+                    embed=embed,
+                    delete_after=delete_after
+                )
+                await ctx.message.delete(delay=delete_after)
 
-            return False
-        else: # everything is normal, not blacklisted
+                return False
+            else: # everything is normal, not blacklisted
+                return True
+        except (FileNotFoundError, json.JSONDecodeError):
+            # If blacklist file doesn't exist or is invalid, allow the command
             return True
     
     @tasks.loop(minutes=1)
@@ -383,23 +411,40 @@ class Bot(commands.AutoShardedBot):
 
         self.change_status.start()
     
-    async def _create_pool(self):
-        try:
-            self.db = await asyncpg.create_pool(dsn=POSTGRES_DSN)
-        except Exception as exc:
-            print('Failed to connect to database.')
-            traceback.print_exc()
-        else:
-            print('Database connected.')
-
-        await self.db.execute('CREATE TABLE IF NOT EXISTS prefixes (guild_id BIGINT, prefix TEXT)')
-        await self.db.execute('CREATE TABLE IF NOT EXISTS blacklist (user_id BIGINT)')
+    async def _create_data_files(self):
+        """Create necessary data files if they don't exist"""
+        import os
+        
+        # Create data directory if it doesn't exist
+        os.makedirs('data', exist_ok=True)
+        
+        # Create prefixes.json if it doesn't exist
+        if not os.path.exists('data/prefixes.json'):
+            with open('data/prefixes.json', 'w') as f:
+                json.dump({}, f)
+        
+        # Create blacklist.json if it doesn't exist
+        if not os.path.exists('data/blacklist.json'):
+            with open('data/blacklist.json', 'w') as f:
+                json.dump([], f)
+        
+        # Create captcha_data.json if it doesn't exist
+        if not os.path.exists('data/captcha_data.json'):
+            with open('data/captcha_data.json', 'w') as f:
+                json.dump({}, f)
+        
+        # Create verification_cooldown.json if it doesn't exist
+        if not os.path.exists('data/verification_cooldown.json'):
+            with open('data/verification_cooldown.json', 'w') as f:
+                json.dump({}, f)
+        
+        print('Data files initialized.')
 
     async def setup_hook(self) -> None:
         self.tree.copy_global_to(guild=MY_GUILD)
         await self.tree.sync(guild=MY_GUILD)
         asyncio.create_task(self._startup_task())
-        await self._create_pool()
+        await self._create_data_files()
         self.add_view(Verify())
         self.add_view(Ticket())
         self.add_view(TicketClose())
