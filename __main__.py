@@ -438,6 +438,11 @@ class Bot(commands.AutoShardedBot):
             with open('data/verification_cooldown.json', 'w') as f:
                 json.dump({}, f)
         
+        # Create warnings.json if it doesn't exist
+        if not os.path.exists('data/warnings.json'):
+            with open('data/warnings.json', 'w') as f:
+                json.dump({}, f)
+        
         print('Data files initialized.')
 
     async def setup_hook(self) -> None:
