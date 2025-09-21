@@ -10,7 +10,6 @@ import inspect
 import logging
 
 import discord
-from discord import app_commands
 from discord.ext import commands, tasks
 import os
 import json
@@ -323,7 +322,6 @@ class SelfRoles(discord.ui.View):
             await interaction.response.send_message(f'I have added {polls.mention} to you', ephemeral=True)
             await interaction.user.add_roles(polls)
 #---------------------------------------------------------------------------------------------------------
-MY_GUILD = discord.Object(id=760134264242700320)
 
 os.environ['JISHAKU_HIDE'] = 'True'
 os.environ['JISHAKU_NO_UNDERSCORE'] = 'True'
@@ -331,7 +329,7 @@ os.environ['JISHAKU_FORCE_PAGINATOR'] = 'True'
 os.environ['JISHAKU_NO_DM_TRACEBACK'] = 'True'
 
 class Bot(commands.AutoShardedBot):
-    def __init__(self, *, intents: discord.Intents, application_id: int):
+    def __init__(self, *, intents: discord.Intents):
         super().__init__(
             command_prefix=_prefix_callable,
             shard_count=1, 
@@ -341,8 +339,7 @@ class Bot(commands.AutoShardedBot):
             owner_ids=[
                 868465221373665351,
                 748552378504052878 # pandey
-            ],
-            application_id=application_id
+            ]
         )
         self.add_check(self.blacklisted_check)
     
@@ -446,8 +443,6 @@ class Bot(commands.AutoShardedBot):
         print('Data files initialized.')
 
     async def setup_hook(self) -> None:
-        self.tree.copy_global_to(guild=MY_GUILD)
-        await self.tree.sync(guild=MY_GUILD)
         asyncio.create_task(self._startup_task())
         await self._create_data_files()
         self.add_view(Verify())
@@ -463,5 +458,5 @@ class Bot(commands.AutoShardedBot):
 intents = discord.Intents.all()
 
 if __name__ == '__main__':
-    bot = Bot(intents=intents, application_id=919149033820418059)
+    bot = Bot(intents=intents)
     bot.run()
