@@ -212,7 +212,9 @@ class WarningSystem(commands.Cog):
         field_count = 0
         
         for warning in warnings:
-            warning_entry = f"**Warning #{warning['id']}**\n📝 {warning['reason']}\n👮 Moderator: <@{warning['moderator_id']}>\n📅 {datetime.fromisoformat(warning['timestamp']).strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+            warning_time = datetime.fromisoformat(warning['timestamp'])
+            epoch_timestamp = int(warning_time.timestamp())
+            warning_entry = f"**Warning #{warning['id']}**\n📝 {warning['reason']}\n👮 Moderator: <@{warning['moderator_id']}>\n📅 <t:{epoch_timestamp}:F>\n\n"
             
             # Check if adding this warning would exceed the limit
             if len(warning_text + warning_entry) > 1000:  # Leave some buffer
