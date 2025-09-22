@@ -371,6 +371,10 @@ class Bot(commands.AutoShardedBot):
             # If blacklist file doesn't exist or is invalid, allow the command
             return True
     
+    async def on_message(self, message):
+        """Main message handler to process commands"""
+        await self.process_commands(message)
+    
     @tasks.loop(minutes=1)
     async def change_status(self):
         await self.change_presence(

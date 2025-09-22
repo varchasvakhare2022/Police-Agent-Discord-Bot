@@ -93,6 +93,11 @@ class WarningSystem(commands.Cog):
         # Add warning to database
         warning_id = self.add_warning(user.id, ctx.author.id, reason, ctx.guild.id)
         
+        # Log the warning
+        logging_cog = self.bot.get_cog('ComprehensiveLogging')
+        if logging_cog:
+            await logging_cog.log_warning_issued(user, ctx.author, reason, warning_id, ctx.guild)
+        
         # Send DM to user
         try:
             dm_embed = discord.Embed(
@@ -267,8 +272,13 @@ class WarningSystem(commands.Cog):
     
     @commands.command(name='clearwarnings')
     @commands.has_permissions(manage_messages=True)
-    async def clear_warnings(self, ctx, user: discord.Member):
-        """Clear all warnings for a user"""
+    async def clear_warnings(self, ctx, user: discord.Member, warning_id: int = None):
+        """Clear all warnings for a user or a specific warning by ID
+        
+        Usage:
+        -clearwarnings @user - Clear all warnings
+        -clearwarnings @user 1 - Clear specific warning ID
+        """
         warnings_data = self.load_warnings()
         
         if str(ctx.guild.id) not in warnings_data:
@@ -283,22 +293,69 @@ class WarningSystem(commands.Cog):
             await ctx.reply(embed=embed, delete_after=10)
             return
         
-        # Count warnings before clearing
-        warning_count = len(warnings_data[str(ctx.guild.id)][str(user.id)])
+        user_warnings = warnings_data[str(ctx.guild.id)][str(user.id)]
         
-        # Clear warnings
-        warnings_data[str(ctx.guild.id)][str(user.id)] = []
-        self.save_warnings(warnings_data)
-        
-        embed = discord.Embed(
-            title="✅ Warnings Cleared",
-            description=f"Successfully cleared **{warning_count}** warnings for {user.mention}",
-            color=0x00ff00
-        )
-        embed.set_footer(text=f"Moderator: {ctx.author.name}")
-        embed.timestamp = datetime.now()
-        
-        await ctx.reply(embed=embed)
+        if warning_id is None:
+            # Clear all warnings
+            warning_count = len(user_warnings)
+            warnings_data[str(ctx.guild.id)][str(user.id)] = []
+            self.save_warnings(warnings_data)
+            
+            # Log the warning clearance
+            logging_cog = self.bot.get_cog('ComprehensiveLogging')
+            if logging_cog:
+                await logging_cog.log_warnings_cleared(user, ctx.author, warning_count, ctx.guild)
+            
+            embed = discord.Embed(
+                title="✅ All Warnings Cleared",
+                description=f"Successfully cleared **{warning_count}** warnings for {user.mention}",
+                color=0x00ff00
+            )
+            embed.set_footer(text=f"Moderator: {ctx.author.name}")
+            embed.timestamp = datetime.now()
+            
+            await ctx.reply(embed=embed)
+            
+        else:
+            # Clear specific warning by ID
+            warning_to_remove = None
+            for warning in user_warnings:
+                if warning['id'] == warning_id:
+                    warning_to_remove = warning
+                    break
+            
+            if warning_to_remove is None:
+                embed = discord.Embed(
+                    title="❌ Warning Not Found",
+                    description=f"Warning ID **#{warning_id}** not found for {user.mention}",
+                    color=0xff0000
+                )
+                await ctx.reply(embed=embed, delete_after=10)
+                return
+            
+            # Remove the specific warning
+            warnings_data[str(ctx.guild.id)][str(user.id)] = [w for w in user_warnings if w['id'] != warning_id]
+            self.save_warnings(warnings_data)
+            
+            # Log the specific warning clearance
+            logging_cog = self.bot.get_cog('ComprehensiveLogging')
+            if logging_cog:
+                await logging_cog.log_specific_warning_cleared(user, ctx.author, warning_to_remove, ctx.guild)
+            
+            embed = discord.Embed(
+                title="✅ Warning Cleared",
+                description=f"Successfully cleared warning **#{warning_id}** for {user.mention}",
+                color=0x00ff00
+            )
+            embed.add_field(
+                name="Cleared Warning",
+                value=f"**Reason:** {warning_to_remove['reason']}\n**Original Moderator:** <@{warning_to_remove['moderator_id']}>",
+                inline=False
+            )
+            embed.set_footer(text=f"Moderator: {ctx.author.name}")
+            embed.timestamp = datetime.now()
+            
+            await ctx.reply(embed=embed)
     
     @clear_warnings.error
     async def clear_warnings_error(self, ctx, error):

@@ -10,7 +10,7 @@ class RuleMonitor(commands.Cog):
         self.cooldown_users = {}  # Track users to avoid spam
         self.cooldown_duration = 300  # 5 minutes cooldown per user
         
-        # Define rule patterns and their corresponding rule numbers
+        # Define rule patterns and their corresponding rule numbers with police persona
         self.rule_patterns = {
             # Rule #1 - Discord TOS & Community Guidelines
             1: {
@@ -21,7 +21,7 @@ class RuleMonitor(commands.Cog):
                     r'\b(phishing|scam|hack|exploit)\b',
                     r'\b(raid|raiding|raider)\b'
                 ],
-                'message': "Discord TOS violations are against **Rule #1**."
+                'message': "🚨 **FREEZE!** You're violating Discord's Terms of Service! That's **Rule #1** - step away from the keyboard!"
             },
             
             # Rule #2 - Bot Rules
@@ -31,7 +31,7 @@ class RuleMonitor(commands.Cog):
                     r'\b(auto|automation|script|macro)\b.*\b(bot|discord)\b',
                     r'\b(alt account|alt acc|multiple accounts)\b.*\b(bot|farming)\b'
                 ],
-                'message': "Bot abuse is against **Rule #2**."
+                'message': "🚨 **HALT!** Bot abuse detected! You're under arrest for violating **Rule #2**!"
             },
             
             # Rule #3 - Robbing
@@ -41,7 +41,7 @@ class RuleMonitor(commands.Cog):
                     r'\b(take.*money|steal.*money|rob.*money)\b',
                     r'\b(mafia|mafiabot|robbery)\b'
                 ],
-                'message': "Robbing and heisting are against **Rule #3**."
+                'message': "🚨 **STOP RIGHT THERE!** Robbing is illegal in this jurisdiction! You've broken **Rule #3**!"
             },
             
             # Rule #4 - Racism
@@ -52,7 +52,7 @@ class RuleMonitor(commands.Cog):
                     r'\b(monkey|ape|gorilla)\b.*\b(black|african)\b',
                     r'\b(terrorist|bomb|jihad)\b.*\b(muslim|arab|middle east)\b'
                 ],
-                'message': "Racist language is against **Rule #4**."
+                'message': "🚨 **FREEZE!** That's a hate crime! Racist language violates **Rule #4** - you're under arrest!"
             },
             
             # Rule #5 - Channel Appropriacy
@@ -61,7 +61,7 @@ class RuleMonitor(commands.Cog):
                     r'\b(general|off-topic|random)\b.*\b(help|support|question)\b',
                     r'\b(help|support)\b.*\b(general|off-topic|random)\b'
                 ],
-                'message': "Please keep topics in appropriate channels - **Rule #5**."
+                'message': "🚨 **STOP!** Wrong channel, citizen! Keep topics in their proper place - that's **Rule #5**!"
             },
             
             # Rule #6 - NSFW
@@ -73,7 +73,7 @@ class RuleMonitor(commands.Cog):
                     r'\b(gore|blood|violence|kill|murder|death)\b',
                     r'\b(rape|raping|molest|molesting)\b'
                 ],
-                'message': "NSFW content is against **Rule #6**."
+                'message': "🚨 **HANDS UP!** Inappropriate content detected! NSFW material violates **Rule #6** - you're busted!"
             },
             
             # Rule #7 - Voice Rules
@@ -84,7 +84,7 @@ class RuleMonitor(commands.Cog):
                     r'\b(voice hopping|vc hopping|voice chat hopping)\b',
                     r'\b(mic spam|microphone spam)\b'
                 ],
-                'message': "Voice chat violations are against **Rule #7**."
+                'message': "🚨 **CEASE AND DESIST!** Voice chat violations! You're disturbing the peace - **Rule #7**!"
             },
             
             # Rule #8 - Spam
@@ -96,7 +96,7 @@ class RuleMonitor(commands.Cog):
                     r'(.){50,}',       # Very long messages
                     r'[!@#$%^&*()_+]{10,}'  # Excessive special characters
                 ],
-                'message': "Spamming is against **Rule #8**."
+                'message': "🚨 **STOP SPAMMING!** You're flooding the chat! That's **Rule #8** - cease this activity immediately!"
             },
             
             # Rule #9 - Alternate Accounts
@@ -106,7 +106,7 @@ class RuleMonitor(commands.Cog):
                     r'\b(main|main account|primary account)\b.*\b(alt|alt account)\b',
                     r'\b(ban evasion|evading ban|circumvent ban)\b'
                 ],
-                'message': "Using alternate accounts is against **Rule #9**."
+                'message': "🚨 **IDENTITY FRAUD DETECTED!** Using alternate accounts is against **Rule #9** - you're under investigation!"
             },
             
             # Rule #10 - Begging
@@ -117,7 +117,7 @@ class RuleMonitor(commands.Cog):
                     r'\b(poor|broke|no money|need help)\b.*\b(money|coins|cash)\b',
                     r'\b(donate|donation|charity|help me)\b.*\b(money|coins|cash)\b'
                 ],
-                'message': "Begging is against **Rule #10**."
+                'message': "🚨 **PANHANDLING IS ILLEGAL!** Begging violates **Rule #10** - keep your hands out of others' pockets!"
             },
             
             # Rule #11 - Advertisement
@@ -130,7 +130,7 @@ class RuleMonitor(commands.Cog):
                     r'\b(instagram|twitter|facebook|tiktok)\b',
                     r'\b(website|site|link|check out)\b.*\b(my|our|this)\b'
                 ],
-                'message': "Advertisements are against **Rule #11**."
+                'message': "🚨 **ILLEGAL ADVERTISING!** Unauthorized promotion detected! That's **Rule #11** - no soliciting!"
             },
             
             # Rule #12 - Common Sense
@@ -141,7 +141,7 @@ class RuleMonitor(commands.Cog):
                     r'\b(mod abuse|admin abuse|staff abuse)\b',
                     r'\b(harass|harassment|bully|bullying)\b'
                 ],
-                'message': "This behavior violates **Rule #12** - Common Sense."
+                'message': "🚨 **CRIMINAL BEHAVIOR!** You're exploiting the system! That violates **Rule #12** - use your common sense!"
             }
         }
     
@@ -172,42 +172,60 @@ class RuleMonitor(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         """Monitor all messages for rule violations"""
+        # Debug: Print message content for testing
+        print(f"Rule Monitor: Received message '{message.content}' from {message.author.name}")
+        
         # Ignore bot messages
         if message.author.bot:
+            print(f"Rule Monitor: Ignoring bot message from {message.author.name}")
             return
         
-        # Ignore messages from bot owners
-        if await self.bot.is_owner(message.author):
-            return
+        # Ignore messages from bot owners (disabled for testing)
+        # if await self.bot.is_owner(message.author):
+        #     print(f"Rule Monitor: Ignoring owner message from {message.author.name}")
+        #     return
         
-        # Check if user is on cooldown
-        if self.is_user_on_cooldown(message.author.id):
-            return
-        
-        # Check message for rule violations
+        # Check message for rule violations first
         rule_num, rule_message = self.check_message_for_rules(message.content)
+        print(f"Rule Monitor: Checked message, rule_num: {rule_num}, message: {rule_message}")
         
         if rule_num and rule_message:
+            print(f"Rule Monitor: Rule violation detected! Rule #{rule_num}")
+            
+            # Always log the rule violation (regardless of cooldown)
+            logging_cog = self.bot.get_cog('ComprehensiveLogging')
+            if logging_cog:
+                await logging_cog.log_rule_violation(message.author, rule_num, rule_message, message.guild, message.content, message.channel)
+            
+            # Check if user is on cooldown for sending reminders
+            if self.is_user_on_cooldown(message.author.id):
+                print(f"Rule Monitor: User {message.author.name} is on cooldown - logged but no reminder sent")
+                return
+            
             # Add user to cooldown
             self.add_user_cooldown(message.author.id)
             
-            # Create rule reminder embed
+            # Create rule reminder embed with police persona
             embed = discord.Embed(
-                title="🚨 Rule Reminder",
+                title="🚨 POLICE ALERT",
                 description=f"{message.author.mention}, {rule_message}",
                 color=0xff0000
             )
-            embed.set_footer(text="Please follow our server rules to maintain a positive environment")
+            embed.set_footer(text="This is your warning! Next violation may result in disciplinary action!")
             
             # Send the reminder
             try:
                 await message.reply(embed=embed, delete_after=30)
+                print(f"Rule Monitor: Sent rule reminder for Rule #{rule_num}")
             except discord.Forbidden:
                 # If we can't reply, try sending to the channel
                 try:
                     await message.channel.send(embed=embed, delete_after=30)
-                except:
-                    pass  # If we can't send at all, just ignore
+                    print(f"Rule Monitor: Sent rule reminder to channel for Rule #{rule_num}")
+                except Exception as e:
+                    print(f"Rule Monitor: Failed to send reminder: {e}")
+        else:
+            print(f"Rule Monitor: No rule violation detected in message")
     
     @commands.command(name='rulecooldown')
     @commands.has_permissions(manage_messages=True)
